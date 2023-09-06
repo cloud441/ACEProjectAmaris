@@ -1,6 +1,6 @@
 # ACE Certification Project Tutorial
 
-![](https://hackmd.io/_uploads/SyM792ppn.png)
+![](doc/img/ace_logo.png)
 
 **Synopsis:**
 
@@ -10,8 +10,7 @@ We want to build an application that retrieve Reddit posts related to a specific
 
 ### Step 0.1: Understand the project architecture
 
-![](https://hackmd.io/_uploads/ryqvtsn2n.png)
-
+![](doc/img/ace_project_diagram.svg)
 
 ### Step 0.2: Estimate your Project services cost
 
