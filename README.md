@@ -16,26 +16,25 @@ We want to build an application that retrieve Reddit posts related to a specific
 
 * click on this link to use the Google estimator tool: [Google Cloud Pricing Calculator](https://cloud.google.com/products/calculator)
 
-> [color=blue] You have one main service in term of cost (Other services used are negligible):
-    * **GKE** (Google Kubernetes Engine)
+> You have one main service in terms of cost (Other services used are negligible), this is GKE
 
-* Try to predict your GKE cluster based on Elasticsearch documentations and the following informations:
+* Try to predict your GKE cluster based on Elasticsearch documentations and the following information:
 
-* Compare your estimation to [this one](https://cloud.google.com/products/calculator/#id=ab527a5b-d906-4517-a833-109b606d579b). If you have a different configuration, this is not always a problem. This estimation in based on used ressources in a auto-pilot GKE cluster. Just try to understand what is really necessary by yourself.
+* Compare your estimation to [this one](https://cloud.google.com/products/calculator/#id=ab527a5b-d906-4517-a833-109b606d579b). If you have a different configuration, this is not always a problem. This estimation in based on used resources in an auto-pilot GKE cluster. Just try to understand what is really necessary by yourself.
 
 ### Step 0.3: Create the project
 
 * Go on your [GCP console](https://console.cloud.google.com/welcome/new) and create a new project *ACEProject*, then select it.
 * using **Cloud Monitoring**, create a new dashboard for this project.
 
-## Part 1: Setup your Elasticsearch Service
+## Part 1: Set up your Elasticsearch Service
 
 ### Step 1.1: Create your GKE cluster for all your services
 
 * Enable the **Google Kubernetes Engine** API.
 * Create your Kubernetes cluster using these specifications (feel free to try others):
-    * select standard cluster type on the top-right corner (needed for next service firewall configurations).
-    * if a specification is not mentionned, let the default value.
+    * select standard cluster type in the top-right corner (needed for next service firewall configurations).
+    * if a specification is not mentioned, let the default value.
 
 |       Tab       | Specification name        | value                |
 |:---------------:|:------------------------- |:-------------------- |
@@ -124,7 +123,7 @@ We want to build an application that retrieve Reddit posts related to a specific
 * for future connection using Python Elasticsearch client, we need to keep the IP address and the port encrypted. Use this [kubernetes manifest](config/kubernetes_manifests/elasticsearch_service/es_secret.yaml) to add your credentials:
     * ```kubectl create -f es_secret.yaml```
 
-## Part 2: Setup your Reddit API Cronjob
+## Part 2: Set up your Reddit API Cronjob
 
 ### Step 2.1 (Optional): Connect to Reddit API
 
@@ -140,16 +139,16 @@ We want to build an application that retrieve Reddit posts related to a specific
 
 ### Step 2.2: Create your cronjob application
 
-* Write a Python script to retieve new posts from Reddit API and push them to the Elasticsearch Index. You can find the following code [here](src/cronjob_reddit/reddit_api_scrapper.py). Please follow this help instructions:
+* Write a Python script to retrieve new posts from Reddit API and push them to the Elasticsearch Index. You can find the following code [here](src/cronjob_reddit/reddit_api_scrapper.py). Please follow this help instructions:
     * your Elasticsearch connector use SSL certificates to encrypt data, your certificate is on a env variable set on your deploy manifest (defined later). you just need to write the certificate to a file a give the file to your connector.
-    * your connector will need ther user name and password according to the defined user in Kibana.
-    * please add some logs to help you debugging in case of error.
+    * your connector will need the username and password according to the defined user in Kibana.
+    * please add some logs to help you to debug in case of error.
 * you want to store your secret credentials in a secure location, so write your credentials in this [Kubernetes manifest](config/kubernetes_manifests/cronjob_reddit/cronjob_reddit_secret.yaml) AFTER a base64 encoding, for example:
     * ```echo -n "cronjon-reddit" | base64```
 * apply this manifest in your GKE cluster:
     * ```kubectl create -f cronjob_reddit_secret.yaml```
 
-### Step 2.3: Setup your Artifact Image Registry
+### Step 2.3: Set up your Artifact Image Registry
 
 * Go to Artifact Registry in your GCP Console.
 * Create a new repository *cronjob-reddit*.
@@ -158,7 +157,7 @@ We want to build an application that retrieve Reddit posts related to a specific
 
 ### Step 2.4: Deploy your cronjob application on GKE
 
-* Now we need to create an image to deploy your cronjob app, a good practice is to begin with creating your Makefile. A Makefile example is [here](Makefile.md)
+* Now we need to create an image to deploy your cronjob app, a good practice is to begin with creating your Makefile. A Makefile example is [here](Makefile)
     * write a rule for building your image using [this Dockerfile](config/cronjob_reddit/Dockerfile)
     * and another rule for pushing this image to your Artifact Registry.
 * build your image:
@@ -173,7 +172,7 @@ We want to build an application that retrieve Reddit posts related to a specific
     * once a job is launched, wait for the pod to be up and check the log: ```kubectl logs POD_ID```
 
 
-## Part 3: Setup your Web interface application
+## Part 3: Set up your Web interface application
 
 ### Step 3.1: Create your Web application
 
@@ -183,7 +182,7 @@ We want to build an application that retrieve Reddit posts related to a specific
 * apply this secret manifest in your GKE cluster:
     * ```kubectl create -f app_secret.yaml```
 
-### Step 3.2: Setup your Artifact Image Registry
+### Step 3.2: Set up your Artifact Image Registry
 
 * Go to Artifact Registry in your GCP Console.
 * Create a new repository *web-app*.
@@ -236,7 +235,7 @@ firestore_db = firestore.Client(
     * user prompt
     * number of posts requested
     * all posts:
-        * all the informations, not only the text.
+        * all the information, not only the text.
 * build your image:
     * ```make build-image-app```
 * push and tag your image:
@@ -268,7 +267,7 @@ firestore_db = firestore.Client(
 * Go to VPC Network on your GCP Console.
 * Go to Firewall Policies on the left tab.
 * Create a new Firewall rule:
-    * change the IP address macro with your specific service IP adresses.
+    * change the IP address macro with your specific service IP addresses.
 
 | parameter name       |                     Value                     |
 | -------------------- |:---------------------------------------------:|
