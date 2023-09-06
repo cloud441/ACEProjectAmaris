@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACE App - Post Search Tool</title>
+    <!-- Include Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Custom CSS styles can be added here */
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="display-4">Search Posts</h1>
+        <form method="POST">
+            <!-- Form components with Bootstrap classes -->
+            <div class="form-group">
+                <label for="prompt">Enter a text prompt:</label>
+                <textarea class="form-control" name="prompt" rows="4" cols="50"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="num_posts">Number of Posts to Retrieve:</label>
+                <input class="form-control" type="number" name="num_posts" min="1" value="1">
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+
+        <!-- Display retrieved posts with Bootstrap styles -->
+        {% if posts %}
+        <h2 class="mt-4">Retrieved Posts:</h2>
+        <ul class="list-group">
+            {% for post in posts %}
+            <li class="list-group-item">
+                <strong>Reddit User:</strong> {{ post.username }}<br>
+                <strong>Title:</strong> {{ post.title }}<br>
+                <strong>Date:</strong> {{ post.creation_date_utc }}<br>
+                <strong>Subreddit:</strong> {{ post.subreddit }}<br>
+                <strong>Content:</strong><br>
+                <p>{{ post.text }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+
+    <!-- Include Bootstrap JavaScript (optional, for advanced UI components) -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script> -->
+</body>
+</html>
