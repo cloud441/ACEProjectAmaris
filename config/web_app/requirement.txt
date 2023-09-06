@@ -1,0 +1,5 @@
+elasticsearch==8.9.0
+loguru==0.7.0
+uvicorn==0.23.2
+firebase-admin==6.2.0
+flask==2.3.3

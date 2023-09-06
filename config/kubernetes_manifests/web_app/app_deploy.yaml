@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app
+spec:
+  replicas: 2  # Number of desired replicas
+  selector:
+    matchLabels:
+      app: web-app
+  template:
+    metadata:
+      labels:
+        app: web-app
+    spec:
+      serviceAccountName: gke-service-account
+      containers:
+        - name: web-app
+          image:
+          envFrom:
+            - secretRef:
+                name: es-service-uri
+            - secretRef:
+                name: web-app-es-service-credentials
+            - secretRef:
+                name: reddit-cluster-es-http-certs-public
+            - secretRef:
+                name: web-app-firestore-parameter
+          ports:
+            - containerPort: 5000

@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cronjob-reddit
+spec:
+  schedule: "*/5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: cronjob-reddit-container
+            image:
+            imagePullPolicy: IfNotPresent
+            envFrom:
+              - secretRef:
+                  name: es-service-uri
+              - secretRef:
+                  name: cronjob-reddit-es-service-credentials
+              - secretRef:
+                  name: reddit-cluster-es-http-certs-public
+          restartPolicy: OnFailure
