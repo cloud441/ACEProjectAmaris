@@ -135,7 +135,7 @@ We want to build an application that retrieve Reddit posts related to a specific
     * app type: script
     * redirect uri: http://localhost:8080
 * get your Client ID and App secret as you can see in the next screenshot:
-![](https://hackmd.io/_uploads/r1ZP9Q0an.png)
+![](doc/img/reddit_app.png)
 
 * using these credentials, get your refresh token using this [Python script](src/cronjob_reddit/refresh_token.py).
 
@@ -205,7 +205,7 @@ We want to build an application that retrieve Reddit posts related to a specific
     * ```kubectl apply -f app_service.yaml```
 * your app is running, you can fully test it now using the external IP address of the load balancer and the port you set:
 
-![](https://hackmd.io/_uploads/SylGbdmRh.png)
+![](doc/img/web_app_example.png)
 
 ## Part 4: Add a Database for user Request/Index Answer
 
