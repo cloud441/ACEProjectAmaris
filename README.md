@@ -1,4 +1,32 @@
-# ACE Certification Project Tutorial
+# Google ACE Certification
+
+The [Google Associate Cloud Engineer (ACE) certification](https://cloud.google.com/learn/certification/cloud-engineer?hl=en) is a learning/exam with the objective to become a project-ready cloud engineer on the Google Cloud Platform (GCP).
+
+## What is a Google Associate Cloud Engineer ?
+
+According to Google:
+>>>  Associate Cloud Engineers deploy applications, monitor operations, and manage enterprise solutions. They use Google Cloud Console and the command-line interface to perform common platform-based tasks to maintain one or more deployed solutions that leverage Google-managed or self-managed services on Google Cloud.
+> The Associate Cloud Engineer exam assesses your ability to:
+> * Set up a cloud solution environment
+> * Deploy and implement a cloud solution
+> * Configure access and security
+> * Plan and configure a cloud solution
+> * Ensure successful operation of a cloud solution
+
+## What are the main topics covered ?
+
+* **Compute Services**
+* Use of **Load Balancer**
+* Manage User and Service **Access** and **Rights**
+* Manage **Security** and **Networking**
+* **Database Services**
+* Services **Logs** and **Errors**
+* Services and Project **Monitoring**
+* Application and Service **Scale Up**
+* Services **Cost Estimation**
+* Application **Versioning** and **Rollback**
+
+# ACE Project Tutorial
 
 ![](doc/img/ace_logo.png)
 
@@ -16,6 +44,10 @@ Before implementing a project and related services, there are some good practice
 ### Step 0.1: Understand the project architecture
 
 ![](doc/img/ace_project_diagram.png)
+
+>>> Let's discuss a bit about Service choices:
+> * **Google Kubernetes Engine (GKE)** is a good fit for our project compared to other Compute Engine such as App Engine or Compute Engine. Elasticsearch is built to be easily deployed in a distributed way for multiple pods. We also need to scale up all our applications and Elasticsearch storage easily depend on requirements. In addition, Elasticsearch also provide a easy cluster operator for Kubernetes to help you manage the cluster.
+> * **Cloud Firestore** is also a good choice as a Database for logging our application responses. Data format could change a lot depending on the Web Interface and our posts responses depends on the number of retrieved posts. We need NoSQL database such as Firestore. Then, Firestore is the best solution for serverless Database without a very large number of data logged.
 
 ### Step 0.2: Estimate your Project services cost
 
