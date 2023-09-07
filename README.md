@@ -1,11 +1,13 @@
 # Google ACE Certification
 
+![](doc/img/ace_logo.png)
+
 The [Google Associate Cloud Engineer (ACE) certification](https://cloud.google.com/learn/certification/cloud-engineer?hl=en) is a learning/exam with the objective to become a project-ready cloud engineer on the Google Cloud Platform (GCP).
 
 ## What is a Google Associate Cloud Engineer ?
 
 According to Google:
->>>  Associate Cloud Engineers deploy applications, monitor operations, and manage enterprise solutions. They use Google Cloud Console and the command-line interface to perform common platform-based tasks to maintain one or more deployed solutions that leverage Google-managed or self-managed services on Google Cloud.
+> Associate Cloud Engineers deploy applications, monitor operations, and manage enterprise solutions. They use Google Cloud Console and the command-line interface to perform common platform-based tasks to maintain one or more deployed solutions that leverage Google-managed or self-managed services on Google Cloud.
 > The Associate Cloud Engineer exam assesses your ability to:
 > * Set up a cloud solution environment
 > * Deploy and implement a cloud solution
@@ -28,8 +30,6 @@ According to Google:
 
 # ACE Project Tutorial
 
-![](doc/img/ace_logo.png)
-
 **Synopsis:**
 
 We want to build an application that retrieve Reddit posts related to a specific request made by the user. The user can write the request he wants in a textbox, with some given parameters such as the number of post to retrieve. We need to track latest posts on our subreddits with an acceptable delay and keep older posts too.
@@ -45,7 +45,7 @@ Before implementing a project and related services, there are some good practice
 
 ![](doc/img/ace_project_diagram.png)
 
->>> Let's discuss a bit about Service choices:
+> Let's discuss a bit about Service choices:
 > * **Google Kubernetes Engine (GKE)** is a good fit for our project compared to other Compute Engine such as App Engine or Compute Engine. Elasticsearch is built to be easily deployed in a distributed way for multiple pods. We also need to scale up all our applications and Elasticsearch storage easily depend on requirements. In addition, Elasticsearch also provide a easy cluster operator for Kubernetes to help you manage the cluster.
 > * **Cloud Firestore** is also a good choice as a Database for logging our application responses. Data format could change a lot depending on the Web Interface and our posts responses depends on the number of retrieved posts. We need NoSQL database such as Firestore. Then, Firestore is the best solution for serverless Database without a very large number of data logged.
 
