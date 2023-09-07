@@ -15,7 +15,7 @@ Before implementing a project and related services, there are some good practice
 
 ### Step 0.1: Understand the project architecture
 
-![](doc/img/ace_project_diagram.svg)
+![](doc/img/ace_project_diagram.png)
 
 ### Step 0.2: Estimate your Project services cost
 
