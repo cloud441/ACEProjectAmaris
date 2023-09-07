@@ -8,15 +8,22 @@ We want to build an application that retrieve Reddit posts related to a specific
 
 ## Part 0: Introduction steps
 
+Before implementing a project and related services, there are some good practices to follow. In this project, before everything we want to:
+* define the project architecture
+* estimate services cost
+* create the project on our cloud provider
+
 ### Step 0.1: Understand the project architecture
 
 ![](doc/img/ace_project_diagram.svg)
 
 ### Step 0.2: Estimate your Project services cost
 
+> This is not always trivial to estimate a project cost. During the development, we may want to switch from a service to another or scale up depending on the requirement.
+
 * click on this link to use the Google estimator tool: [Google Cloud Pricing Calculator](https://cloud.google.com/products/calculator)
 
-> You have one main service in terms of cost (Other services used are negligible), this is GKE
+> You have one main service in terms of cost (other services used are negligible), this is GKE
 
 * Try to predict your GKE cluster based on Elasticsearch documentations and the following information:
 
@@ -28,6 +35,8 @@ We want to build an application that retrieve Reddit posts related to a specific
 * using **Cloud Monitoring**, create a new dashboard for this project.
 
 ## Part 1: Set up your Elasticsearch Service
+
+> The first Service to implement is our Elasticsearch cluster. The reason we want to use kubernetes for this service is because Elasticsearch is built for being parallelized on multiple pods, exactly as Kubernetes deploy applications in multiple pods.
 
 ### Step 1.1: Create your GKE cluster for all your services
 
@@ -49,6 +58,8 @@ We want to build an application that retrieve Reddit posts related to a specific
 |   Networking    | DNS provider              | Cloud DNS            |
 
 ### Step 1.2: Setup Elasticsearch Operator
+
+> Elastic Cloud is a tool from Elasticsearch to deploy on cloud architecture, especially on Kubernetes architecture. We don't have to install it manually, the operator do the job for use in addition of managing all cluster nodes. 
 
 * Wait a couple of minutes for your cluster to create, then connect to it using Cloud Shell or your local terminal:
     * ```gcloud container clusters get-credentials ace-services-cluster --region europe-west1 --project PROJECT_ID```
@@ -94,6 +105,8 @@ We want to build an application that retrieve Reddit posts related to a specific
 
 ### Step 1.4: Deploy a Kibana Instance to help you manage your Elasticsearch cluster
 
+> Kibana is a tool developed by Elasticsearch creators with the objective to help you manage cluster, indices, users and roles and many other configuration related to your Elasticsearch cluster.
+
 * using [this manifest](config/kubernetes_manifests/kibana_service/kibana_node.yaml), create a Kibana service:
     * ```kubectl apply -f kibana_node.yaml```
 * access kibana user interface by running this command locally:
@@ -118,14 +131,18 @@ We want to build an application that retrieve Reddit posts related to a specific
 | cronjob-reddit | reddit-post-index-write |
 
 
-### Step 1.5: ADD your secret credentials in GKE cluster
+### Step 1.5: Add your secret credentials in GKE cluster
 
 * for future connection using Python Elasticsearch client, we need to keep the IP address and the port encrypted. Use this [kubernetes manifest](config/kubernetes_manifests/elasticsearch_service/es_secret.yaml) to add your credentials:
     * ```kubectl create -f es_secret.yaml```
 
 ## Part 2: Set up your Reddit API Cronjob
 
+> The Reddit API Cronjob is an application that retrieve last posts on followed subreddit. A cronjob is a job scheduled to run periodically (5 min in our case). This application must not have public IP address and stay local in GKE local network.
+
 ### Step 2.1 (Optional): Connect to Reddit API
+
+> This step is optional but needed if we want to perform a lot of request to Reddit API. Feel free to do it if your interested in this API.
 
 * create a Reddit account [here](https://www.reddit.com/register/)
 * create a [new reddit API app](https://www.reddit.com/prefs/apps):
@@ -150,6 +167,8 @@ We want to build an application that retrieve Reddit posts related to a specific
 
 ### Step 2.3: Set up your Artifact Image Registry
 
+> Artifact Registry is the Google service to store Docker images or language packages is the same way as Git store and track code modification. 
+
 * Go to Artifact Registry in your GCP Console.
 * Create a new repository *cronjob-reddit*.
 * set up your Cloud shell or local terminal for this Artifact region:
@@ -173,6 +192,8 @@ We want to build an application that retrieve Reddit posts related to a specific
 
 
 ## Part 3: Set up your Web interface application
+
+> This Application is the entrypoint for our project for the user perspective. We could build a Web Interface or a simple REST API, depend on your need. An important thing to keep in mind is the need of a load balancer because the application is one of our possible request bottleneck.
 
 ### Step 3.1: Create your Web application
 
@@ -207,6 +228,8 @@ We want to build an application that retrieve Reddit posts related to a specific
 
 ## Part 4: Add a Database for user Request/Index Answer
 
+> In a lot of projects, you will need a Database to store specific application log or user request. In our case, we want to store all our application responses to user requests in order to track user experience. The kind of data is not static because it depends on our retrieved posts, so we may want a NoSQL Database such as Firestore. 
+
 ### Step 4.1: Create a Firestore Database
 
 * Go to Firestore on the GCP Console.
@@ -215,6 +238,8 @@ We want to build an application that retrieve Reddit posts related to a specific
     * select europe-west4 as zone because this is the closest one to our GKE cluster zone
 
 ### Step 4.2: Setup Workload Identity for you Web Application
+
+> Workload Identity is a good practice to allow specific application or service to use Service Account credentials automatically without the need to create specific secret for this purpose. To do that, we need to create a Service Account which act as a Google IAM User Account but for a service.
 
 * follow [this tutorial](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity?hl=fr#enable-existing-cluster) to create a service account for your web app and enable to connect to Firestore Database.
 
@@ -250,6 +275,15 @@ firestore_db = firestore.Client(
 * Done ! You normally could see your requested logs in the firestore database on GCP console.
 
 ## Part 5: Network Security and Service Firewall
+
+>>> At this point in the project, everything is working but our services at totally unsecure, especially our Elasticsearch cluster which store or datas.
+> Let's check our security breaches and what we need to do:
+> * Are our Application Credentials hidden is the Code ? <span style="color: green;">Yes, everything is store in Kubernetes secret.</span>
+> * Could someone else than our Reddit Cronjob write or update data in our Elasticsearch index ? <span style="color: green;">No, the only Kibana user with write/update rights is our cronjob.</span>
+> * Could someone access our log datas in the Firestore Database ? <span style="color: green;">No, Firestore is a secure serverless database and the only one that can manage data in our WebApp Service account.</span>
+> * Is our Elasticsearch cluster protected from DDos ? <span style="color: red;">Not already, Any external IP address can access our Elasticsearch cluster.</span>
+> 
+> What we need to close the security breach is a firewall on our Elasticsearch service.
 
 ### Step 5.1: Get your Applications IP addresses
 
